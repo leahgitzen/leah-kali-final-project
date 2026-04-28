@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Closet App</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f8f5ff;
+      --bg2: #eef8ff;
+      --surface: rgba(255, 255, 255, 0.82);
+      --card: #ffffff;
+      --border: #ded5ff;
+      --accent: #a78bfa;
+      --accent-dark: #7c5eea;
+      --accent2: #8bd3ff;
+      --accent3: #f7b7d2;
+      --text: #2d2440;
+      --muted: #756a8f;
+      --danger: #e86f91;
+      --success: #67b99a;
+      --shadow: 0 14px 35px rgba(116, 89, 170, 0.14);
+      --radius: 18px;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(167,139,250,0.28), transparent 32%),
+        radial-gradient(circle at top right, rgba(139,211,255,0.34), transparent 34%),
+        linear-gradient(135deg, var(--bg), var(--bg2));
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    header {
+      border-bottom: 1px solid rgba(222, 213, 255, 0.75);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 74px;
+      position: sticky;
+      top: 0;
+      background: rgba(255,255,255,0.82);
+      backdrop-filter: blur(14px);
+      z-index: 100;
+      box-shadow: 0 8px 25px rgba(120, 100, 180, 0.08);
+    }
+
+    .logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.1rem;
+      letter-spacing: 4px;
+      color: var(--accent-dark);
+    }
+
+    nav { display: flex; gap: 0.4rem; flex-wrap: wrap; justify-content: flex-end; }
+
+    nav button {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--muted);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 0.55rem 1rem;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    nav button:hover { color: var(--accent-dark); background: rgba(167,139,250,0.12); }
+    nav button.active { color: #fff; background: linear-gradient(135deg, var(--accent), var(--accent2)); box-shadow: 0 8px 18px rgba(124,94,234,0.18); }
+
+    main { max-width: 1300px; margin: 0 auto; padding: 2rem; }
+
+    .page { display: none; animation: fadeUp 0.3s ease; }
+    .page.active { display: block; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .page-header {
+      margin-bottom: 1.5rem;
+      background: rgba(255,255,255,0.55);
+      border: 1px solid rgba(222, 213, 255, 0.75);
+      border-radius: 24px;
+      padding: 1.6rem;
+      box-shadow: var(--shadow);
+    }
+
+    .page-header h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.4rem, 5vw, 4rem);
+      letter-spacing: 4px;
+      line-height: 1;
+      color: var(--accent-dark);
+    }
+
+    .page-header p { color: var(--muted); margin-top: 0.45rem; font-size: 0.95rem; }
+
+    .search-bar, .form-card, .analysis-card {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      margin-bottom: 1.5rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+      box-shadow: var(--shadow);
+    }
+
+    .form-card { display: block; }
+    .form-card h2, .analysis-card h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      letter-spacing: 2px;
+      color: var(--accent-dark);
+      margin-bottom: 0.75rem;
+      font-size: 1.8rem;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 0.8rem;
+    }
+
+    input, select, textarea {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      padding: 0.72rem 0.95rem;
+      transition: all 0.2s;
+      width: 100%;
+    }
+
+    textarea { min-height: 92px; resize: vertical; }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(167,139,250,0.16);
+    }
+
+    input::placeholder, textarea::placeholder { color: #a69abf; }
+    select option { background: #fff; }
+
+    .search-bar input, .search-bar select { flex: 1; min-width: 145px; }
+
+    .btn {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff;
+      border: none;
+      border-radius: 999px;
+      padding: 0.72rem 1.35rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+      box-shadow: 0 10px 18px rgba(124,94,234,0.16);
+    }
+
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 12px 22px rgba(124,94,234,0.22); }
+    .btn.secondary { background: #efeaff; color: var(--accent-dark); box-shadow: none; }
+    .btn.danger { background: linear-gradient(135deg, #f59db8, var(--danger)); }
+    .btn.success { background: linear-gradient(135deg, #9ee6cb, var(--success)); }
+
+    .button-row { display: flex; gap: 0.7rem; flex-wrap: wrap; margin-top: 1rem; }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.5rem;
+      box-shadow: var(--shadow);
+    }
+
+    .stat-card .label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); font-weight: 700; }
+    .stat-card .value { font-family: 'Bebas Neue', sans-serif; font-size: 2.7rem; color: var(--accent-dark); line-height: 1.1; margin-top: 0.25rem; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1rem;
+    }
+
+    .item-card, .store-card, .review-card {
+      background: var(--card);
+      border: 1px solid rgba(222, 213, 255, 0.9);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .item-card::before, .store-card::before, .review-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent3));
+    }
+
+    .item-card:hover, .store-card:hover, .review-card:hover { transform: translateY(-4px); }
+
+    .store-tag, .store-name {
+      font-size: 0.73rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--accent-dark);
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+    }
+
+    .item-card h3, .review-card .item-name {
+      font-size: 1rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 0.75rem;
+    }
+
+    .meta { display: flex; justify-content: space-between; align-items: center; margin-top: 0.75rem; }
+    .price { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; color: var(--accent-dark); letter-spacing: 1px; }
+
+    .type-badge {
+      font-size: 0.7rem;
+      background: #eef8ff;
+      color: #427da3;
+      padding: 0.3rem 0.65rem;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 800;
+      display: inline-block;
+    }
+
+    .rating { display: flex; align-items: center; gap: 0.4rem; margin-top: 0.6rem; }
+    .stars { color: #f7b731; font-size: 0.9rem; }
+    .rating-text, .review-count, .location { font-size: 0.8rem; color: var(--muted); }
+
+    a { color: var(--accent-dark); text-decoration: none; font-weight: 700; }
+    a:hover { text-decoration: underline; }
+
+    .card-actions { display: flex; gap: 0.55rem; flex-wrap: wrap; margin-top: 1rem; }
+    .small-btn {
+      border: none;
+      border-radius: 999px;
+      padding: 0.45rem 0.8rem;
+      font-size: 0.75rem;
+      font-weight: 800;
+      cursor: pointer;
+      background: #efeaff;
+      color: var(--accent-dark);
+    }
+    .small-btn.delete { background: #ffe8ef; color: var(--danger); }
+
+    .store-card h3 { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; letter-spacing: 2px; margin-bottom: 0.4rem; color: var(--accent-dark); }
+    .store-card .type { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: #427da3; font-weight: 800; margin-bottom: 0.75rem; }
+    .big-rating { font-family: 'Bebas Neue', sans-serif; font-size: 2.7rem; color: var(--accent-dark); line-height: 1; }
+
+    .loading, .empty {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: var(--muted);
+      font-size: 0.95rem;
+      grid-column: 1 / -1;
+    }
+
+    .loading::after {
+      content: '';
+      display: block;
+      width: 32px;
+      height: 32px;
+      border: 3px solid #e7dcff;
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      margin: 1rem auto 0;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .result-count { font-size: 0.85rem; color: var(--muted); margin-bottom: 1rem; }
+    .result-count span { color: var(--accent-dark); font-weight: 800; }
+
+    .error-banner, .message-banner {
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+      display: none;
+      box-shadow: var(--shadow);
+    }
+    .error-banner { background: #fff0f4; border: 1px solid #ffc8d8; color: var(--danger); }
+    .message-banner { background: #eefcf6; border: 1px solid #bdebd9; color: #3e8b6f; }
+    .error-banner.visible, .message-banner.visible { display: block; }
+
+    .bar-chart { width: 100%; display: grid; gap: 0.75rem; }
+    .bar-row { display: grid; grid-template-columns: 120px 1fr 42px; gap: 0.75rem; align-items: center; font-size: 0.85rem; color: var(--muted); }
+    .bar-wrap { background: #efeaff; height: 14px; border-radius: 999px; overflow: hidden; }
+    .bar { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 999px; }
+
+    .note {
+      color: var(--muted);
+      font-size: 0.86rem;
+      margin-top: 0.5rem;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">CLOSET</div>
+  <nav>
+    <button class="active" onclick="showPage(event, 'items')">Items</button>
+    <button onclick="showPage(event, 'stores')">Stores</button>
+    <button onclick="showPage(event, 'reviews')">Reviews</button>
+    <button onclick="showPage(event, 'manage')">Manage</button>
+    <button onclick="showPage(event, 'analysis')">Analysis</button>
+  </nav>
+</header>
+
+<main>
+  <div id="error-banner" class="error-banner">
+    ⚠ Can't connect to Flask server. Make sure <code>python3 app.py</code> is running on port 5000.
+  </div>
+  <div id="message-banner" class="message-banner"></div>
+
+  <div id="page-items" class="page active">
+    <div class="page-header">
+      <h1>Browse Items</h1>
+      <p>Search and filter clothing across all stores</p>
+    </div>
+
+    <div class="search-bar">
+      <input id="search-name" type="text" placeholder="Item name..." oninput="searchItems()"/>
+      <select id="search-type" onchange="searchItems()"><option value="">All types</option></select>
+      <select id="search-store" onchange="searchItems()"><option value="">All stores</option></select>
+      <input id="search-min" type="number" placeholder="Min $" min="0" oninput="searchItems()"/>
+      <input id="search-max" type="number" placeholder="Max $" min="0" oninput="searchItems()"/>
+      <input id="search-rating" type="number" placeholder="Min rating" min="0" max="5" step="0.1" oninput="searchItems()"/>
+      <button class="btn secondary" onclick="clearSearch()">Clear</button>
+    </div>
+
+    <div id="items-count" class="result-count"></div>
+    <div id="items-grid" class="grid"><div class="loading">Loading items</div></div>
+  </div>
+
+  <div id="page-stores" class="page">
+    <div class="page-header">
+      <h1>Stores</h1>
+      <p>All clothing stores in the database</p>
+    </div>
+
+    <div class="stats" id="stores-stats"></div>
+
+    <div class="search-bar">
+      <input id="store-search-name" type="text" placeholder="Store name..." oninput="searchStores()"/>
+      <input id="store-search-location" type="text" placeholder="Location..." oninput="searchStores()"/>
+    </div>
+
+    <div id="stores-count" class="result-count"></div>
+    <div id="stores-grid" class="grid"><div class="loading">Loading stores</div></div>
+  </div>
+
+  <div id="page-reviews" class="page">
+    <div class="page-header">
+      <h1>Reviews</h1>
+      <p>Ratings sorted by highest rated</p>
+    </div>
+    <div id="reviews-count" class="result-count"></div>
+    <div id="reviews-grid" class="grid"><div class="loading">Loading reviews</div></div>
+  </div>
+
+  <div id="page-manage" class="page">
+    <div class="page-header">
+      <h1>Manage Database</h1>
+      <p>Add, edit, delete, and reset records from the interface</p>
+    </div>
+
+    <div class="form-card">
+      <h2>Create Database</h2>
+      <p class="note">This button is meant to call a Flask route that creates or resets the SQLite database from your CSV/source data.</p>
+      <div class="button-row">
+        <button class="btn success" onclick="createDatabase()">Create / Reset Database</button>
+        <button class="btn secondary" onclick="loadEverything()">Refresh Data</button>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <h2 id="item-form-title">Add New Item</h2>
+      <div class="form-grid">
+        <input id="item-id" type="hidden" />
+        <input id="form-item-name" type="text" placeholder="Item name" />
+        <input id="form-clothing-type" type="text" placeholder="Clothing type" />
+        <input id="form-price" type="number" min="0" step="0.01" placeholder="Price" />
+        <input id="form-store-id" type="number" min="1" placeholder="Store ID" />
+        <input id="form-product-url" type="url" placeholder="Product URL optional" />
+      </div>
+      <div class="button-row">
+        <button class="btn" onclick="saveItem()">Save Item</button>
+        <button class="btn secondary" onclick="resetItemForm()">Cancel / Clear</button>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <h2>Add New Store</h2>
+      <div class="form-grid">
+        <input id="form-store-name" type="text" placeholder="Store name" />
+        <input id="form-store-type" type="text" placeholder="Store type" />
+        <input id="form-location" type="text" placeholder="Location" />
+        <input id="form-website-url" type="url" placeholder="Website URL optional" />
+      </div>
+      <div class="button-row">
+        <button class="btn" onclick="addStore()">Save Store</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="page-analysis" class="page">
+    <div class="page-header">
+      <h1>Analysis</h1>
+      <p>Simple stats and a non-trivial data visualization from the loaded data</p>
+    </div>
+
+    <div class="stats" id="analysis-stats"></div>
+
+    <div class="analysis-card">
+      <h2>Items by Clothing Type</h2>
+      <div id="type-chart" class="bar-chart"></div>
+    </div>
+
+    <div class="analysis-card">
+      <h2>User-Defined Query</h2>
+      <input id="custom-query" type="text" placeholder="Example: dresses under 50 with rating above 4" />
+      <button class="btn" onclick="runCustomQuery()">Run Query</button>
+    </div>
+  </div>
+</main>
+
+<script>
+  const API = "http://127.0.0.1:5000";
+  let allItems = [], allStores = [], allReviews = [];
+
+  function showPage(event, name) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+    document.getElementById(`page-${name}`).classList.add('active');
+    event.target.classList.add('active');
+  }
+
+  async function apiFetch(path, options = {}) {
+    const res = await fetch(API + path, {
+      headers: { 'Content-Type': 'application/json' },
+      ...options
+    });
+    if (!res.ok) throw new Error(res.statusText);
+    return res.json();
+  }
+
+  function showError() {
+    document.getElementById('error-banner').classList.add('visible');
+  }
+
+  function showMessage(text) {
+    const banner = document.getElementById('message-banner');
+    banner.textContent = text;
+    banner.classList.add('visible');
+    setTimeout(() => banner.classList.remove('visible'), 3500);
+  }
+
+  function stars(rating) {
+    if (!rating) return '';
+    const full = Math.round(rating);
+    return '★'.repeat(full) + '☆'.repeat(5 - full);
+  }
+
+  async function loadEverything() {
+    await Promise.all([loadItems(), loadStores(), loadReviews()]);
+    renderAnalysis();
+  }
+
+  async function loadItems() {
+    try {
+      allItems = await apiFetch('/items');
+      await loadFilters();
+      renderItems(allItems);
+    } catch (e) {
+      showError();
+      document.getElementById('items-grid').innerHTML = '<div class="empty">Could not load items.</div>';
+    }
+  }
+
+  async function loadFilters() {
+    const typeSel = document.getElementById('search-type');
+    const storeSel = document.getElementById('search-store');
+    typeSel.innerHTML = '<option value="">All types</option>';
+    storeSel.innerHTML = '<option value="">All stores</option>';
+
+    try {
+      const types = await apiFetch('/items/types');
+      types.forEach(t => {
+        const o = document.createElement('option');
+        o.value = t; o.textContent = t;
+        typeSel.appendChild(o);
+      });
+    } catch(e) {
+      [...new Set(allItems.map(i => i.clothing_type))].sort().forEach(t => {
+        const o = document.createElement('option');
+        o.value = t; o.textContent = t;
+        typeSel.appendChild(o);
+      });
+    }
+
+    [...new Set(allItems.map(i => i.store_name))].sort().forEach(s => {
+      const o = document.createElement('option');
+      o.value = s; o.textContent = s;
+      storeSel.appendChild(o);
+    });
+  }
+
+  function renderItems(items) {
+    const grid = document.getElementById('items-grid');
+    const count = document.getElementById('items-count');
+    count.innerHTML = `Showing <span>${items.length}</span> item${items.length !== 1 ? 's' : ''}`;
+
+    if (!items.length) {
+      grid.innerHTML = '<div class="empty">No items match your search.</div>';
+      return;
+    }
+
+    grid.innerHTML = items.map(item => `
+      <div class="item-card">
+        <div class="store-tag">${item.store_name || 'Store not listed'}</div>
+        <h3>${item.item_name}</h3>
+        <span class="type-badge">${item.clothing_type}</span>
+        ${item.average_rating ? `
+          <div class="rating">
+            <span class="stars">${stars(item.average_rating)}</span>
+            <span class="rating-text">${Number(item.average_rating).toFixed(1)} (${item.review_count || 0} reviews)</span>
+          </div>` : ''}
+        <div class="meta"><span class="price">$${Number(item.price).toFixed(2)}</span></div>
+        ${item.product_url ? `<a href="${item.product_url}" target="_blank">View product →</a>` : ''}
+        <div class="card-actions">
+          <button class="small-btn" onclick='editItem(${JSON.stringify(item)})'>Edit</button>
+          <button class="small-btn delete" onclick="deleteItem(${item.item_id || item.id})">Delete</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function searchItems() {
+    const name = document.getElementById('search-name').value.toLowerCase();
+    const type = document.getElementById('search-type').value;
+    const store = document.getElementById('search-store').value;
+    const minP = parseFloat(document.getElementById('search-min').value) || 0;
+    const maxP = parseFloat(document.getElementById('search-max').value) || Infinity;
+    const minR = parseFloat(document.getElementById('search-rating').value) || 0;
+
+    const filtered = allItems.filter(i =>
+      String(i.item_name || '').toLowerCase().includes(name) &&
+      (type === '' || i.clothing_type === type) &&
+      (store === '' || i.store_name === store) &&
+      Number(i.price) >= minP && Number(i.price) <= maxP &&
+      (!minR || (i.average_rating && Number(i.average_rating) >= minR))
+    );
+    renderItems(filtered);
+  }
+
+  function clearSearch() {
+    ['search-name','search-min','search-max','search-rating'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('search-type').value = '';
+    document.getElementById('search-store').value = '';
+    renderItems(allItems);
+  }
+
+  async function loadStores() {
+    try {
+      allStores = await apiFetch('/stores');
+      renderStoreStats();
+      renderStores(allStores);
+    } catch(e) {
+      document.getElementById('stores-grid').innerHTML = '<div class="empty">Could not load stores.</div>';
+    }
+  }
+
+  function renderStoreStats() {
+    const types = [...new Set(allStores.map(s => s.store_type))];
+    document.getElementById('stores-stats').innerHTML = `
+      <div class="stat-card"><div class="label">Total Stores</div><div class="value">${allStores.length}</div></div>
+      <div class="stat-card"><div class="label">Store Types</div><div class="value">${types.length}</div></div>
+      <div class="stat-card"><div class="label">Locations</div><div class="value">${[...new Set(allStores.map(s => s.location))].length}</div></div>
+    `;
+  }
+
+  function renderStores(stores) {
+    const grid = document.getElementById('stores-grid');
+    const count = document.getElementById('stores-count');
+    count.innerHTML = `Showing <span>${stores.length}</span> store${stores.length !== 1 ? 's' : ''}`;
+    if (!stores.length) {
+      grid.innerHTML = '<div class="empty">No stores match your search.</div>';
+      return;
+    }
+    grid.innerHTML = stores.map(s => `
+      <div class="store-card">
+        <h3>${s.store_name}</h3>
+        <div class="type">${s.store_type}</div>
+        <div class="location">📍 ${s.location}</div>
+        ${s.website_url ? `<a href="${s.website_url}" target="_blank">${s.website_url.replace('https://','')}</a>` : ''}
+      </div>
+    `).join('');
+  }
+
+  function searchStores() {
+    const name = document.getElementById('store-search-name').value.toLowerCase();
+    const loc = document.getElementById('store-search-location').value.toLowerCase();
+    const filtered = allStores.filter(s =>
+      String(s.store_name || '').toLowerCase().includes(name) &&
+      String(s.location || '').toLowerCase().includes(loc)
+    );
+    renderStores(filtered);
+  }
+
+  async function loadReviews() {
+    try {
+      allReviews = await apiFetch('/reviews');
+      renderReviews(allReviews);
+    } catch(e) {
+      document.getElementById('reviews-grid').innerHTML = '<div class="empty">Could not load reviews.</div>';
+    }
+  }
+
+  function renderReviews(reviews) {
+    const grid = document.getElementById('reviews-grid');
+    const count = document.getElementById('reviews-count');
+    count.innerHTML = `<span>${reviews.length}</span> review${reviews.length !== 1 ? 's' : ''}`;
+    if (!reviews.length) {
+      grid.innerHTML = '<div class="empty">No reviews found.</div>';
+      return;
+    }
+    grid.innerHTML = reviews.map(r => `
+      <div class="review-card">
+        <div class="item-name">${r.item_name}</div>
+        <div class="store-name">${r.store_name}</div>
+        <div class="big-rating">${Number(r.average_rating).toFixed(1)}</div>
+        <div class="stars">${stars(r.average_rating)}</div>
+        <div class="review-count">${r.review_count} review${r.review_count !== 1 ? 's' : ''}</div>
+      </div>
+    `).join('');
+  }
+
+  async function createDatabase() {
+    try {
+      await apiFetch('/setup-db', { method: 'POST' });
+      showMessage('Database was created/reset successfully.');
+      await loadEverything();
+    } catch(e) {
+      showMessage('Backend route needed: POST /setup-db');
+    }
+  }
+
+  function editItem(item) {
+    document.getElementById('item-form-title').textContent = 'Edit Item';
+    document.getElementById('item-id').value = item.item_id || item.id || '';
+    document.getElementById('form-item-name').value = item.item_name || '';
+    document.getElementById('form-clothing-type').value = item.clothing_type || '';
+    document.getElementById('form-price').value = item.price || '';
+    document.getElementById('form-store-id').value = item.store_id || '';
+    document.getElementById('form-product-url').value = item.product_url || '';
+    document.querySelector("button[onclick=\"showPage(event, 'manage')\"]").click();
+  }
+
+  function resetItemForm() {
+    document.getElementById('item-form-title').textContent = 'Add New Item';
+    ['item-id','form-item-name','form-clothing-type','form-price','form-store-id','form-product-url'].forEach(id => document.getElementById(id).value = '');
+  }
+
+  async function saveItem() {
+    const id = document.getElementById('item-id').value;
+    const item = {
+      item_name: document.getElementById('form-item-name').value,
+      clothing_type: document.getElementById('form-clothing-type').value,
+      price: Number(document.getElementById('form-price').value),
+      store_id: Number(document.getElementById('form-store-id').value),
+      product_url: document.getElementById('form-product-url').value
+    };
+
+    try {
+      if (id) {
+        await apiFetch(`/items/${id}`, { method: 'PUT', body: JSON.stringify(item) });
+        showMessage('Item updated.');
+      } else {
+        await apiFetch('/items', { method: 'POST', body: JSON.stringify(item) });
+        showMessage('Item added.');
+      }
+      resetItemForm();
+      await loadEverything();
+    } catch(e) {
+      showMessage(id ? 'Backend route needed: PUT /items/<id>' : 'Backend route needed: POST /items');
+    }
+  }
+
+  async function deleteItem(id) {
+    if (!id) return showMessage('This item needs an item_id to delete.');
+    if (!confirm('Delete this item?')) return;
+    try {
+      await apiFetch(`/items/${id}`, { method: 'DELETE' });
+      showMessage('Item deleted.');
+      await loadEverything();
+    } catch(e) {
+      showMessage('Backend route needed: DELETE /items/<id>');
+    }
+  }
+
+  async function addStore() {
+    const store = {
+      store_name: document.getElementById('form-store-name').value,
+      store_type: document.getElementById('form-store-type').value,
+      location: document.getElementById('form-location').value,
+      website_url: document.getElementById('form-website-url').value
+    };
+    try {
+      await apiFetch('/stores', { method: 'POST', body: JSON.stringify(store) });
+      showMessage('Store added.');
+      ['form-store-name','form-store-type','form-location','form-website-url'].forEach(id => document.getElementById(id).value = '');
+      await loadEverything();
+    } catch(e) {
+      showMessage('Backend route needed: POST /stores');
+    }
+  }
+
+  function renderAnalysis() {
+    const prices = allItems.map(i => Number(i.price)).filter(n => !Number.isNaN(n));
+    const avgPrice = prices.length ? prices.reduce((a,b) => a + b, 0) / prices.length : 0;
+    const avgRatingValues = allItems.map(i => Number(i.average_rating)).filter(n => !Number.isNaN(n) && n > 0);
+    const avgRating = avgRatingValues.length ? avgRatingValues.reduce((a,b) => a + b, 0) / avgRatingValues.length : 0;
+
+    document.getElementById('analysis-stats').innerHTML = `
+      <div class="stat-card"><div class="label">Total Items</div><div class="value">${allItems.length}</div></div>
+      <div class="stat-card"><div class="label">Average Price</div><div class="value">$${avgPrice.toFixed(0)}</div></div>
+      <div class="stat-card"><div class="label">Average Rating</div><div class="value">${avgRating.toFixed(1)}</div></div>
+    `;
+
+    const counts = {};
+    allItems.forEach(i => {
+      const type = i.clothing_type || 'Unknown';
+      counts[type] = (counts[type] || 0) + 1;
+    });
+
+    const max = Math.max(...Object.values(counts), 1);
+    document.getElementById('type-chart').innerHTML = Object.entries(counts)
+      .sort((a,b) => b[1] - a[1])
+      .map(([type, count]) => `
+        <div class="bar-row">
+          <strong>${type}</strong>
+          <div class="bar-wrap"><div class="bar" style="width:${(count / max) * 100}%"></div></div>
+          <span>${count}</span>
+        </div>
+      `).join('') || '<div class="empty">No data to chart yet.</div>';
+  }
+
+  async function runCustomQuery() {
+    const query = document.getElementById('custom-query').value.trim();
+    if (!query) return showMessage('Type a query first.');
+    try {
+      const results = await apiFetch(`/query?q=${encodeURIComponent(query)}`);
+      if (Array.isArray(results)) {
+        renderItems(results);
+        document.querySelector("button[onclick=\"showPage(event, 'items')\"]").click();
+        showMessage('Custom query ran and the results are showing on the Items page.');
+      } else {
+        showMessage('Custom query ran. Check the backend response.');
+      }
+    } catch(e) {
+      showMessage('Backend route needed: GET /query?q=...');
+    }
+  }
+
+  loadEverything();
+</script>
+</body>
+</html>

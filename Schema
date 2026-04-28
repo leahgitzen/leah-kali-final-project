@@ -1,0 +1,23 @@
+Stores(
+    store_id PRIMARY KEY,
+    store_name,
+    store_type,
+    website_url
+)
+
+Items(
+    item_id PRIMARY KEY,
+    store_id FOREIGN KEY REFERENCES Stores(store_id),
+    item_name,
+    clothing_type,
+    price,
+    product_url,
+    image_url
+)
+
+Reviews(
+    review_id PRIMARY KEY,
+    item_id FOREIGN KEY REFERENCES Items(item_id),
+    review_count,
+    average_rating
+)
