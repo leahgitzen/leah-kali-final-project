@@ -6,11 +6,11 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_NAME = os.path.join(BASE_DIR, "clothing_store.db")
 CSV_FILE = os.path.join(BASE_DIR, "clothing_store_database-3.csv")
 
-
+#conencts to a built database 
 def connect_db():
     return sqlite3.connect(DB_NAME)
 
-
+# creates database comands 
 def init_db():
     """On every startup: create tables if missing, then load CSV if DB is empty."""
     try:
@@ -58,9 +58,9 @@ def init_db():
         if "conn" in locals():
             conn.close()
 
-
+#creates database 
 def create_database():
-    """Wipe and recreate all tables. Asks for confirmation first."""
+    """Wipe and recreate all tables."""
     confirm = input("This will delete ALL data. Type YES to confirm: ").strip()
     if confirm != "YES":
         print("Cancelled.")
@@ -116,7 +116,7 @@ def create_database():
         if "conn" in locals():
             conn.close()
 
-
+#this is the comands to load the csv data including error handling 
 def load_csv_data():
     try:
         conn = connect_db()
@@ -202,7 +202,7 @@ def load_csv_data():
         if "conn" in locals():
             conn.close()
 
-
+#comands to the add store 
 def add_store():
     try:
         store_id = int(input("Enter store id: "))
@@ -232,7 +232,7 @@ def add_store():
         if "conn" in locals():
             conn.close()
 
-
+#comands to add items 
 def add_item():
     try:
         item_id = int(input("Enter item id: "))
@@ -246,6 +246,7 @@ def add_item():
         conn = connect_db()
         cur = conn.cursor()
 
+        # checks store exists before adding item
         cur.execute("SELECT * FROM stores WHERE store_id = ?", (store_id,))
         if not cur.fetchone():
             print("That store id does not exist.")
@@ -276,7 +277,7 @@ def add_item():
         if "conn" in locals():
             conn.close()
 
-
+# same code to add a review 
 def add_review():
     try:
         review_id = int(input("Enter review id: "))
@@ -287,6 +288,7 @@ def add_review():
         conn = connect_db()
         cur = conn.cursor()
 
+        # checks item exists before adding review
         cur.execute("SELECT * FROM items WHERE item_id = ?", (item_id,))
         if not cur.fetchone():
             print("That item id does not exist.")
@@ -311,7 +313,7 @@ def add_review():
         if "conn" in locals():
             conn.close()
 
-
+#code to view all stores
 def view_all_stores():
     try:
         conn = connect_db()
@@ -331,7 +333,7 @@ def view_all_stores():
         if "conn" in locals():
             conn.close()
 
-
+#for viewing all items 
 def view_all_items():
     try:
         conn = connect_db()
@@ -351,7 +353,7 @@ def view_all_items():
         if "conn" in locals():
             conn.close()
 
-
+#same for viewing all reviews 
 def view_all_reviews():
     try:
         conn = connect_db()
@@ -376,7 +378,7 @@ def view_all_reviews():
         if "conn" in locals():
             conn.close()
 
-
+#how to update stores 
 def update_store():
     try:
         store_id = int(input("Enter store id to update: "))
@@ -391,6 +393,7 @@ def update_store():
             conn.close()
             return
 
+        # shows current value in brackets, pressing enter keeps it unchanged
         new_name = input(f"New store name ({row[1]}): ").strip()
         new_type = input(f"New store type ({row[2]}): ").strip()
         new_location = input(f"New location ({row[3]}): ").strip()
@@ -422,7 +425,7 @@ def update_store():
         if "conn" in locals():
             conn.close()
 
-
+#for updating items 
 def update_item():
     try:
         item_id = int(input("Enter item id to update: "))
@@ -437,6 +440,7 @@ def update_item():
             conn.close()
             return
 
+        # shows current value in brackets, pressing enter keeps it unchanged
         new_store_id = input(f"New store id ({row[1]}): ").strip()
         new_name = input(f"New item name ({row[2]}): ").strip()
         new_type = input(f"New clothing type ({row[3]}): ").strip()
@@ -448,6 +452,7 @@ def update_item():
             new_store_id = row[1]
         else:
             new_store_id = int(new_store_id)
+            # checks new store id exists before allowing the update
             cur.execute("SELECT * FROM stores WHERE store_id = ?", (new_store_id,))
             if not cur.fetchone():
                 print("That store id does not exist.")
@@ -484,7 +489,7 @@ def update_item():
         if "conn" in locals():
             conn.close()
 
-
+#same for updating review 
 def update_review():
     try:
         review_id = int(input("Enter review id to update: "))
@@ -499,6 +504,7 @@ def update_review():
             conn.close()
             return
 
+        # shows current value in brackets, pressing enter keeps it unchanged
         new_item_id = input(f"New item id ({row[1]}): ").strip()
         new_count = input(f"New review count ({row[2]}): ").strip()
         new_rating = input(f"New average rating ({row[3]}): ").strip()
@@ -507,6 +513,7 @@ def update_review():
             new_item_id = row[1]
         else:
             new_item_id = int(new_item_id)
+            # checks new item id exists before allowing the update
             cur.execute("SELECT * FROM items WHERE item_id = ?", (new_item_id,))
             if not cur.fetchone():
                 print("That item id does not exist.")
@@ -540,7 +547,7 @@ def update_review():
         if "conn" in locals():
             conn.close()
 
-
+#how to delete stores 
 def delete_store():
     try:
         store_id = int(input("Enter store id to delete: "))
@@ -548,6 +555,7 @@ def delete_store():
         conn = connect_db()
         cur = conn.cursor()
 
+        # blocks deletion if items are still linked to this store
         cur.execute("SELECT * FROM items WHERE store_id = ?", (store_id,))
         if cur.fetchall():
             print("Cannot delete this store because items are still linked to it.")
@@ -571,6 +579,7 @@ def delete_store():
             conn.close()
 
 
+#how to delete items 
 def delete_item():
     try:
         item_id = int(input("Enter item id to delete: "))
@@ -578,6 +587,7 @@ def delete_item():
         conn = connect_db()
         cur = conn.cursor()
 
+        # blocks deletion if reviews are still linked to this item
         cur.execute("SELECT * FROM reviews WHERE item_id = ?", (item_id,))
         if cur.fetchall():
             print("Cannot delete this item because reviews are still linked to it.")
@@ -601,6 +611,7 @@ def delete_item():
             conn.close()
 
 
+#how to delete reviews
 def delete_review():
     try:
         review_id = int(input("Enter review id to delete: "))
@@ -624,6 +635,7 @@ def delete_review():
             conn.close()
 
 
+# runs a search query and prints all matching rows
 def run_search(query, values):
     try:
         conn = connect_db()
@@ -644,6 +656,7 @@ def run_search(query, values):
             conn.close()
 
 
+# search functions for stores
 def search_store_name():
     value = input("Enter store name: ").strip()
     run_search("SELECT * FROM stores WHERE store_name LIKE ?", ('%' + value + '%',))
@@ -654,6 +667,7 @@ def search_store_type():
     run_search("SELECT * FROM stores WHERE store_type LIKE ?", ('%' + value + '%',))
 
 
+# search functions for items
 def search_item_name():
     value = input("Enter item name: ").strip()
     run_search("SELECT * FROM items WHERE item_name LIKE ?", ('%' + value + '%',))
@@ -673,6 +687,7 @@ def search_price_range():
         print("Price values must be numbers.")
 
 
+# search functions for reviews
 def search_average_rating():
     try:
         value = float(input("Enter minimum average rating: "))
@@ -689,6 +704,7 @@ def search_review_count():
         print("Review count must be a number.")
 
 
+# search submenu
 def search_menu():
     while True:
         print("\nSearch Menu")
@@ -723,6 +739,7 @@ def search_menu():
             print("Invalid choice.")
 
 
+# main menu
 def menu():
     while True:
         print("\nClothing Store Database Menu")

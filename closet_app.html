@@ -6,8 +6,11 @@
   <title>Closet App</title>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
   <style>
+    /* this section controls the whole look of the website */
+    /* makes sizing easier and removes the default browser spacing */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    /* main colors and style variables used throughout the page */
     :root {
       --bg: #f8f5ff;
       --bg2: #eef8ff;
@@ -26,6 +29,7 @@
       --radius: 18px;
     }
 
+    /* sets the page font, background, and main text color */
     body {
       font-family: 'DM Sans', sans-serif;
       background:
@@ -36,6 +40,7 @@
       min-height: 100vh;
     }
 
+    /* top navigation bar that stays at the top while scrolling */
     header {
       border-bottom: 1px solid rgba(222, 213, 255, 0.75);
       padding: 0 2rem;
@@ -51,6 +56,7 @@
       box-shadow: 0 8px 25px rgba(120, 100, 180, 0.08);
     }
 
+    /* title on the left side of the navbar */
     .logo {
       font-family: 'Bebas Neue', sans-serif;
       font-size: 2.1rem;
@@ -58,8 +64,10 @@
       color: var(--accent-dark);
     }
 
+    /* keeps all nav buttons in a row and lets them wrap if needed */
     nav { display: flex; gap: 0.4rem; flex-wrap: wrap; justify-content: flex-end; }
 
+    /* styles each navigation button */
     nav button {
       background: transparent;
       border: 1px solid transparent;
@@ -78,16 +86,20 @@
     nav button:hover { color: var(--accent-dark); background: rgba(167,139,250,0.12); }
     nav button.active { color: #fff; background: linear-gradient(135deg, var(--accent), var(--accent2)); box-shadow: 0 8px 18px rgba(124,94,234,0.18); }
 
+    /* main page wrapper so the content is centered */
     main { max-width: 1300px; margin: 0 auto; padding: 2rem; }
 
+    /* hides pages until their nav tab is clicked */
     .page { display: none; animation: fadeUp 0.3s ease; }
     .page.active { display: block; }
 
+    /* small animation when switching between sections */
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(12px); }
       to   { opacity: 1; transform: translateY(0); }
     }
 
+    /* big title section at the top of each page */
     .page-header {
       margin-bottom: 1.5rem;
       background: rgba(255,255,255,0.55);
@@ -107,6 +119,7 @@
 
     .page-header p { color: var(--muted); margin-top: 0.45rem; font-size: 0.95rem; }
 
+    /* shared card styling for search, forms, and analysis sections */
     .search-bar, .form-card, .analysis-card {
       display: flex;
       flex-wrap: wrap;
@@ -128,12 +141,14 @@
       font-size: 1.8rem;
     }
 
+    /* makes the form inputs line up cleanly and resize nicely */
     .form-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
       gap: 0.8rem;
     }
 
+    /* styles all inputs, dropdowns, and text boxes */
     input, select, textarea {
       background: #fff;
       border: 1px solid var(--border);
@@ -159,6 +174,7 @@
 
     .search-bar input, .search-bar select { flex: 1; min-width: 145px; }
 
+    /* main button style used across the app */
     .btn {
       background: linear-gradient(135deg, var(--accent), var(--accent2));
       color: #fff;
@@ -181,6 +197,7 @@
 
     .button-row { display: flex; gap: 0.7rem; flex-wrap: wrap; margin-top: 1rem; }
 
+    /* lays out the stat cards in a responsive grid */
     .stats {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -188,6 +205,7 @@
       margin-bottom: 2rem;
     }
 
+    /* small dashboard cards for totals and averages */
     .stat-card {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -199,12 +217,14 @@
     .stat-card .label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); font-weight: 700; }
     .stat-card .value { font-family: 'Bebas Neue', sans-serif; font-size: 2.7rem; color: var(--accent-dark); line-height: 1.1; margin-top: 0.25rem; }
 
+    /* card grid for items, stores, and reviews */
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
       gap: 1rem;
     }
 
+    /* main card style for each database record shown on the page */
     .item-card, .store-card, .review-card {
       background: var(--card);
       border: 1px solid rgba(222, 213, 255, 0.9);
@@ -281,6 +301,7 @@
     .store-card .type { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: #427da3; font-weight: 800; margin-bottom: 0.75rem; }
     .big-rating { font-family: 'Bebas Neue', sans-serif; font-size: 2.7rem; color: var(--accent-dark); line-height: 1; }
 
+    /* messages shown while loading or when there are no results */
     .loading, .empty {
       text-align: center;
       padding: 4rem 2rem;
@@ -306,6 +327,7 @@
     .result-count { font-size: 0.85rem; color: var(--muted); margin-bottom: 1rem; }
     .result-count span { color: var(--accent-dark); font-weight: 800; }
 
+    /* alert banners for errors and success messages */
     .error-banner, .message-banner {
       border-radius: var(--radius);
       padding: 1rem 1.25rem;
@@ -318,6 +340,7 @@
     .message-banner { background: #eefcf6; border: 1px solid #bdebd9; color: #3e8b6f; }
     .error-banner.visible, .message-banner.visible { display: block; }
 
+    /* simple bar chart used in the analysis page */
     .bar-chart { width: 100%; display: grid; gap: 0.75rem; }
     .bar-row { display: grid; grid-template-columns: 120px 1fr 42px; gap: 0.75rem; align-items: center; font-size: 0.85rem; color: var(--muted); }
     .bar-wrap { background: #efeaff; height: 14px; border-radius: 999px; overflow: hidden; }
@@ -333,6 +356,7 @@
 </head>
 <body>
 
+<!-- top navigation for moving between each main part of the app -->
 <header>
   <div class="logo">CLOSET</div>
   <nav>
@@ -344,18 +368,23 @@
   </nav>
 </header>
 
+<!-- main content for all the pages -->
 <main>
+  <!-- shown if the front end cannot reach the Flask backend -->
   <div id="error-banner" class="error-banner">
     ⚠ Can't connect to Flask server. Make sure <code>python3 app.py</code> is running on port 5000.
   </div>
+  <!-- used for short success/error messages after actions -->
   <div id="message-banner" class="message-banner"></div>
 
+  <!-- items page where users can browse and filter clothing -->
   <div id="page-items" class="page active">
     <div class="page-header">
       <h1>Browse Items</h1>
       <p>Search and filter clothing across all stores</p>
     </div>
 
+    <!-- filters for narrowing down the items being shown -->
     <div class="search-bar">
       <input id="search-name" type="text" placeholder="Item name..." oninput="searchItems()"/>
       <select id="search-type" onchange="searchItems()"><option value="">All types</option></select>
@@ -370,6 +399,7 @@
     <div id="items-grid" class="grid"><div class="loading">Loading items</div></div>
   </div>
 
+  <!-- stores page showing all stores in the database -->
   <div id="page-stores" class="page">
     <div class="page-header">
       <h1>Stores</h1>
@@ -387,6 +417,7 @@
     <div id="stores-grid" class="grid"><div class="loading">Loading stores</div></div>
   </div>
 
+  <!-- reviews page showing rating information -->
   <div id="page-reviews" class="page">
     <div class="page-header">
       <h1>Reviews</h1>
@@ -396,21 +427,24 @@
     <div id="reviews-grid" class="grid"><div class="loading">Loading reviews</div></div>
   </div>
 
+  <!-- manage page where records can be added, edited, or deleted -->
   <div id="page-manage" class="page">
     <div class="page-header">
       <h1>Manage Database</h1>
       <p>Add, edit, delete, and reset records from the interface</p>
     </div>
 
+    <!-- setup section for creating or refreshing the database -->
     <div class="form-card">
       <h2>Create Database</h2>
-      <p class="note">This button is meant to call a Flask route that creates or resets the SQLite database from your CSV/source data.</p>
+      
       <div class="button-row">
         <button class="btn success" onclick="createDatabase()">Create / Reset Database</button>
         <button class="btn secondary" onclick="loadEverything()">Refresh Data</button>
       </div>
     </div>
 
+    <!-- form for adding a new item or editing an existing one -->
     <div class="form-card">
       <h2 id="item-form-title">Add New Item</h2>
       <div class="form-grid">
@@ -427,6 +461,7 @@
       </div>
     </div>
 
+    <!-- form for adding a new store -->
     <div class="form-card">
       <h2>Add New Store</h2>
       <div class="form-grid">
@@ -441,6 +476,7 @@
     </div>
   </div>
 
+  <!-- analysis page with summary stats and a small chart -->
   <div id="page-analysis" class="page">
     <div class="page-header">
       <h1>Analysis</h1>
@@ -463,9 +499,13 @@
 </main>
 
 <script>
+  // base url for the Flask backend
   const API = "http://127.0.0.1:5000";
+
+  // arrays that hold the data after it gets loaded from Flask
   let allItems = [], allStores = [], allReviews = [];
 
+  // switches which page is visible when a nav button is clicked
   function showPage(event, name) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
@@ -473,6 +513,7 @@
     event.target.classList.add('active');
   }
 
+  // helper function so all fetch calls use the same backend setup
   async function apiFetch(path, options = {}) {
     const res = await fetch(API + path, {
       headers: { 'Content-Type': 'application/json' },
@@ -482,10 +523,12 @@
     return res.json();
   }
 
+  // shows the Flask connection error banner
   function showError() {
     document.getElementById('error-banner').classList.add('visible');
   }
 
+  // shows a small message banner and then hides it after a few seconds
   function showMessage(text) {
     const banner = document.getElementById('message-banner');
     banner.textContent = text;
@@ -493,17 +536,20 @@
     setTimeout(() => banner.classList.remove('visible'), 3500);
   }
 
+  // turns a number rating into star symbols
   function stars(rating) {
     if (!rating) return '';
     const full = Math.round(rating);
     return '★'.repeat(full) + '☆'.repeat(5 - full);
   }
 
+  // loads all main data and then refreshes the analysis section
   async function loadEverything() {
     await Promise.all([loadItems(), loadStores(), loadReviews()]);
     renderAnalysis();
   }
 
+  // gets all items from the backend
   async function loadItems() {
     try {
       allItems = await apiFetch('/items');
@@ -515,6 +561,7 @@
     }
   }
 
+  // fills the item type and store dropdown filters
   async function loadFilters() {
     const typeSel = document.getElementById('search-type');
     const storeSel = document.getElementById('search-store');
@@ -543,6 +590,7 @@
     });
   }
 
+  // puts item cards on the page
   function renderItems(items) {
     const grid = document.getElementById('items-grid');
     const count = document.getElementById('items-count');
@@ -573,6 +621,7 @@
     `).join('');
   }
 
+  // filters items based on the search form values
   function searchItems() {
     const name = document.getElementById('search-name').value.toLowerCase();
     const type = document.getElementById('search-type').value;
@@ -591,6 +640,7 @@
     renderItems(filtered);
   }
 
+  // clears all item filters and shows every item again
   function clearSearch() {
     ['search-name','search-min','search-max','search-rating'].forEach(id => document.getElementById(id).value = '');
     document.getElementById('search-type').value = '';
@@ -598,6 +648,7 @@
     renderItems(allItems);
   }
 
+  // gets all stores from the backend
   async function loadStores() {
     try {
       allStores = await apiFetch('/stores');
@@ -608,6 +659,7 @@
     }
   }
 
+  // shows quick stats about the store data
   function renderStoreStats() {
     const types = [...new Set(allStores.map(s => s.store_type))];
     document.getElementById('stores-stats').innerHTML = `
@@ -617,6 +669,7 @@
     `;
   }
 
+  // puts store cards on the page
   function renderStores(stores) {
     const grid = document.getElementById('stores-grid');
     const count = document.getElementById('stores-count');
@@ -635,6 +688,7 @@
     `).join('');
   }
 
+  // filters stores by name and location
   function searchStores() {
     const name = document.getElementById('store-search-name').value.toLowerCase();
     const loc = document.getElementById('store-search-location').value.toLowerCase();
@@ -645,6 +699,7 @@
     renderStores(filtered);
   }
 
+  // gets review data from the backend
   async function loadReviews() {
     try {
       allReviews = await apiFetch('/reviews');
@@ -654,6 +709,7 @@
     }
   }
 
+  // puts review cards on the page
   function renderReviews(reviews) {
     const grid = document.getElementById('reviews-grid');
     const count = document.getElementById('reviews-count');
@@ -673,6 +729,7 @@
     `).join('');
   }
 
+  // calls the backend route for setting up the database
   async function createDatabase() {
     try {
       await apiFetch('/setup-db', { method: 'POST' });
@@ -683,6 +740,7 @@
     }
   }
 
+  // moves an existing item into the form so it can be edited
   function editItem(item) {
     document.getElementById('item-form-title').textContent = 'Edit Item';
     document.getElementById('item-id').value = item.item_id || item.id || '';
@@ -694,11 +752,13 @@
     document.querySelector("button[onclick=\"showPage(event, 'manage')\"]").click();
   }
 
+  // clears the item form and puts it back into add mode
   function resetItemForm() {
     document.getElementById('item-form-title').textContent = 'Add New Item';
     ['item-id','form-item-name','form-clothing-type','form-price','form-store-id','form-product-url'].forEach(id => document.getElementById(id).value = '');
   }
 
+  // saves a new item or updates an existing one
   async function saveItem() {
     const id = document.getElementById('item-id').value;
     const item = {
@@ -724,6 +784,7 @@
     }
   }
 
+  // deletes an item after the user confirms it
   async function deleteItem(id) {
     if (!id) return showMessage('This item needs an item_id to delete.');
     if (!confirm('Delete this item?')) return;
@@ -736,6 +797,7 @@
     }
   }
 
+  // sends a new store to the backend
   async function addStore() {
     const store = {
       store_name: document.getElementById('form-store-name').value,
@@ -753,6 +815,7 @@
     }
   }
 
+  // calculates summary stats and builds the clothing type chart
   function renderAnalysis() {
     const prices = allItems.map(i => Number(i.price)).filter(n => !Number.isNaN(n));
     const avgPrice = prices.length ? prices.reduce((a,b) => a + b, 0) / prices.length : 0;
@@ -783,6 +846,7 @@
       `).join('') || '<div class="empty">No data to chart yet.</div>';
   }
 
+  // sends the user-defined query to Flask and shows the results as item cards
   async function runCustomQuery() {
     const query = document.getElementById('custom-query').value.trim();
     if (!query) return showMessage('Type a query first.');
@@ -800,6 +864,7 @@
     }
   }
 
+  // loads the app data as soon as the page opens
   loadEverything();
 </script>
 </body>

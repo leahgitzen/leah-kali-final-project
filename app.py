@@ -3,14 +3,19 @@ from flask_cors import CORS
 import sqlite3
 
 app = Flask(__name__)
+
+# this loads the main html page when the site first opens
 @app.route("/")
 def home():
     return send_file("closet_app.html")
+
 CORS(app)
 
+# database file that the app connects to
 DB_NAME = "clothing_store.db"
 
 
+# opens the database and makes rows easier to turn into dictionaries
 def get_db():
     conn = sqlite3.connect(DB_NAME)
     conn.row_factory = sqlite3.Row
@@ -20,10 +25,12 @@ def get_db():
 
 
 
+# this is here for the setup button, but the database is already made
 @app.route("/setup-db", methods=["POST"])
 def setup_db():
     return jsonify({"message": "database already loaded"})
 
+# gets all items with their store info and review stats
 @app.route("/items", methods=["GET"])
 def get_items():
     conn = get_db()
@@ -53,6 +60,7 @@ def get_items():
     conn.close()
     return jsonify(rows)
 
+# gets each clothing type once for the filter/dropdown
 @app.route("/items/types", methods=["GET"])
 def item_types():
     conn = get_db()
@@ -69,6 +77,7 @@ def item_types():
     return jsonify(rows)
 
 
+# gets all the stores in alphabetical order
 @app.route("/stores", methods=["GET"])
 def get_stores():
     conn = get_db()
@@ -80,6 +89,7 @@ def get_stores():
     return jsonify(rows)
 
 
+# adds a new store from the form data
 @app.route("/stores", methods=["POST"])
 def add_store():
     data = request.get_json()
@@ -102,6 +112,7 @@ def add_store():
 
     return jsonify({"message": "store added"})
 
+# gets review averages and review counts for each item
 @app.route("/reviews")
 def get_reviews():
     conn = get_db()
@@ -126,6 +137,7 @@ def get_reviews():
     return jsonify(rows)
 
 
+# adds a new clothing item to the database
 @app.route("/items", methods=["POST"])
 def add_item():
     data = request.get_json()
@@ -150,6 +162,7 @@ def add_item():
     return jsonify({"message": "item added"})
 
 
+# updates an item that already exists
 @app.route("/items/<int:item_id>", methods=["PUT"])
 def update_item(item_id):
     data = request.get_json()
@@ -175,10 +188,12 @@ def update_item(item_id):
 
     return jsonify({"message": "item updated"})
 
+# runs a custom select query from the front end
 @app.route("/query")
 def run_query():
     q = request.args.get("q", "")
 
+    # keeps users from running anything besides select queries here
     if not q.lower().startswith("select"):
         return jsonify([])
 
@@ -190,6 +205,7 @@ def run_query():
 
     return jsonify(rows)
 
+# deletes an item and its reviews
 @app.route("/items/<int:item_id>", methods=["DELETE"])
 def delete_item(item_id):
     conn = get_db()
@@ -204,11 +220,13 @@ def delete_item(item_id):
     return jsonify({"message": "item deleted"})
 
 
+# runs a custom query from a post request
 @app.route("/custom-query", methods=["POST"])
 def custom_query():
     data = request.get_json()
     query = data["query"]
 
+    # only lets select queries run so the database does not get changed here
     if not query.lower().startswith("select"):
         return jsonify({"error": "only select queries allowed"})
 
@@ -222,6 +240,7 @@ def custom_query():
     return jsonify(rows)
 
 
+# gets basic numbers for the dashboard/stat section
 @app.route("/stats", methods=["GET"])
 def stats():
     conn = get_db()
@@ -245,5 +264,6 @@ def stats():
     })
 
 
+# starts the flask server on port 5000
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
